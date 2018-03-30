@@ -53,9 +53,9 @@ function isOpen(side)
 	end
 end
 
-function send(dst, data)
+function send(dst, data, proto)
 	-- Construct a packet
-	local packet = Packet(VERSION, PACKET_TYPE_DATA, DataExtra(local_id, dst, data))
+	local packet = Packet(VERSION, PACKET_TYPE_DATA, DataExtra(local_id, dst, data, proto))
 
 	-- Serialize the packet and send to the router over WAN_CHANNEL on all enabled modems
 	local packet_ser = packet:serialize()
