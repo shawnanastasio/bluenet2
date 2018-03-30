@@ -4,10 +4,10 @@
 -- Licensed under the terms of the GNU GPL v3 license
 
 -- Channel for all LAN data traffic
-LAN_CHANNEL = 6010
+LAN_CHANNEL = 100
 
 -- Channel for all WAN announcement traffic
-WAN_CHANNEL = 6050
+WAN_CHANNEL = 101
 
 -- Packet types
 PACKET_TYPE_ANNOUNCE = 1
