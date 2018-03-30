@@ -22,7 +22,7 @@ local function announce_host_down(side)
 end
 
 -- Rednet-compatible API
--- TODO: Protocols (CC 1.6+), broadcast, host/unhost/lookup (CC 1.6+)?
+-- TODO: broadcast, host/unhost/lookup (CC 1.6+)?
 function open(side)
 	if table_contains(modems, side) ~= nil then
 		-- Already open, silently ignore
@@ -57,7 +57,7 @@ function send(dst, data, proto)
 	-- Construct a packet
 	local packet = Packet(VERSION, PACKET_TYPE_DATA, DataExtra(local_id, dst, data, proto))
 
-	-- Serialize the packet and send to the router over WAN_CHANNEL on all enabled modems
+	-- Serialize the packet and send to the router over LAN_CHANNEL on all enabled modems
 	local packet_ser = packet:serialize()
 	for _, v in pairs(modems) do
 		peripheral.call(v, "transmit", LAN_CHANNEL, 0, packet_ser)

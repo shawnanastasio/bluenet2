@@ -37,6 +37,7 @@ ANNCMD_HOST_DOWN = 2
 -- src : The ID of the packet's sender
 -- dst : The ID of the packet's intended recipient
 -- data : A string of the packet data
+-- proto: (optional) Protocol of the packet
 
 -- Implementation
 
