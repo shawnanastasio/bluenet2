@@ -130,11 +130,12 @@ setmetatable(DataExtra, {
 	end,
 })
 
-function DataExtra.new(src, dst, data)
+function DataExtra.new(src, dst, data, proto)
 	local self = setmetatable({}, DataExtra)
 	self[1] = src
 	self[2] = dst
 	self[3] = data
+	self[4] = proto
 	return self
 end
 
@@ -153,6 +154,10 @@ end
 
 function DataExtra:get_data()
 	return self[3]
+end
+
+function DataExtra:get_proto()
+	return self[4]
 end
 
 -- Helper functions
