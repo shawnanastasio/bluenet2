@@ -60,7 +60,7 @@ function send(dst, data)
 	-- Serialize the packet and send to the router over WAN_CHANNEL on all enabled modems
 	local packet_ser = packet:serialize()
 	for _, v in pairs(modems) do
-		peripheral.call(v, "transmit", WAN_CHANNEL, 0, packet_ser)
+		peripheral.call(v, "transmit", LAN_CHANNEL, 0, packet_ser)
 	end
 end
 

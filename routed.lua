@@ -52,7 +52,8 @@ function handle_wan_msg(side, msg)
 		local route = routing_table[data:get_dst()]
 		if route ~= nil then
 			-- Send packet
-			peripheral.call(route[1], "transmit", LAN_CHANNEL, 0, data:get_data())
+			peripheral.call(route[1], "transmit", LAN_CHANNEL, 0, msg)
+			log("Forwarding packet from wan src " .. data:get_src() .. " to dst " .. data:get_dst())
 		else
 			log("Dropping packet for dst " .. data:get_dst() .. " not in routing table")
 		end
@@ -102,7 +103,7 @@ function handle_lan_msg(side, msg)
 		else
 			-- Destination is on lan, send it directly
 			log("Packet from " .. data:get_src() .. " is to a dst on LAN")
-			peripheral.call(route[1], "transmit", LAN_CHANNEL, 0, data:get_data())
+			peripheral.call(route[1], "transmit", LAN_CHANNEL, 0, msg)
 		end
 	else
 		log("Error, recieved packet with unknown type: " .. type)
