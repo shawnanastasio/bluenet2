@@ -22,7 +22,7 @@ local function announce_host_down(side)
 end
 
 -- Rednet-compatible API
--- TODO: Protocols (CC 1.6+), broadcast, host/unhost/lookup (CC 1.6+)?
+-- TODO: broadcast, host/unhost/lookup (CC 1.6+)?
 function open(side)
 	if table_contains(modems, side) ~= nil then
 		-- Already open, silently ignore
@@ -53,18 +53,30 @@ function isOpen(side)
 	end
 end
 
-function send(dst, data)
+function send(dst, data, proto)
 	-- Construct a packet
-	local packet = Packet(VERSION, PACKET_TYPE_DATA, DataExtra(local_id, dst, data))
+	local packet = Packet(VERSION, PACKET_TYPE_DATA, DataExtra(local_id, dst, data, proto))
 
-	-- Serialize the packet and send to the router over WAN_CHANNEL on all enabled modems
+	-- Serialize the packet and send to the router over LAN_CHANNEL on all enabled modems
 	local packet_ser = packet:serialize()
 	for _, v in pairs(modems) do
 		peripheral.call(v, "transmit", LAN_CHANNEL, 0, packet_ser)
 	end
 end
 
-function receive(timeout)
+function receive(arg1, arg2)
+	-- Check if a protocol was provided
+	
+	local timeout = nil
+	local proto = nil
+
+	if type(arg1) == "number" then
+		timeout = arg1
+	else
+		proto = arg1
+		timeout = arg2
+	end
+
 	if timeout ~= nil then
 		os.startTimer(timeout)
 	end
@@ -80,8 +92,10 @@ function receive(timeout)
 			if packet:get_type() == PACKET_TYPE_DATA then
 				local extra = DataExtra.from_raw(packet:get_extra())
 				if extra:get_dst() == local_id then
-					-- Packet is for us, return
-					return extra:get_src(), extra:get_data()
+					-- Packet is for us, check protocol if existing
+					if (proto ~= nil and extra:get_proto() == proto) or proto == nil then
+						return extra:get_src(), extra:get_data(), extra:get_proto()
+					end
 				end
 			end
 		end
