@@ -5,13 +5,14 @@
 -- Include protocol library
 dofile("bluenet2/protocol.lua")
 
-local WAN_MODEMS = {}
-local LAN_MODEMS = {}
-local VERBOSE = true
-
 -- Include config file
 if fs.exists("/routed.conf") then
 	dofile("/routed.conf")
+else
+	-- Default config
+	WAN_MODEMS = {}
+	LAN_MODEMS = {}
+	VERBOSE = true
 end
 
 -- Routing Table:
