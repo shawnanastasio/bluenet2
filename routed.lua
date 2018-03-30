@@ -9,6 +9,11 @@ local WAN_MODEMS = {}
 local LAN_MODEMS = {}
 local VERBOSE = true
 
+-- Include config file
+if fs.exists("/routed.conf") then
+	dofile("/routed.conf")
+end
+
 -- Routing Table:
 -- Key: ID
 -- Value : {lan_side (str)}
