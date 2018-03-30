@@ -64,7 +64,19 @@ function send(dst, data, proto)
 	end
 end
 
-function receive(timeout)
+function receive(arg1, arg2)
+	-- Check if a protocol was provided
+	
+	local timeout = nil
+	local proto = nil
+
+	if type(arg1) == "number" then
+		timeout = arg1
+	else
+		proto = arg1
+		timeout = arg2
+	end
+
 	if timeout ~= nil then
 		os.startTimer(timeout)
 	end
@@ -80,8 +92,10 @@ function receive(timeout)
 			if packet:get_type() == PACKET_TYPE_DATA then
 				local extra = DataExtra.from_raw(packet:get_extra())
 				if extra:get_dst() == local_id then
-					-- Packet is for us, return
-					return extra:get_src(), extra:get_data()
+					-- Packet is for us, check protocol if existing
+					if (proto ~= nil and extra:get_proto() == proto) or proto == nil then
+						return extra:get_src(), extra:get_data(), extra:get_proto()
+					end
 				end
 			end
 		end
