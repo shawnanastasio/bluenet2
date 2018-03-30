@@ -15,7 +15,7 @@ local VERBOSE = true
 local routing_table = {}
 
 function init()
-	print("Bluenet " .. VERSION .. " routed initalizing...")
+	print("Bluenet " .. VERSION .. " routed initializing...")
 
 	-- Open ports for listening on WAN and LAN modems
 	for k, v in pairs(WAN_MODEMS) do
@@ -78,11 +78,13 @@ function handle_lan_msg(side, msg)
 			-- Add this host to the routing table
 			local src = announce:get_src()
 			routing_table[src] = {side}
+			log("Adding " .. src .. " to routing table")
 			-- TODO: Add some authentication?
 		elseif anncmd == ANNCMD_HOST_DOWN then
 			-- Remove this host from the routing table
 			local src = announce:get_src()
 			routing_table[src] = nil
+			log("Removing " .. src .. " from the routing table")
 		else
 			log("Recieved packet with unknown ANNCMD: " .. anncmd)
 		end
@@ -93,11 +95,13 @@ function handle_lan_msg(side, msg)
 		local route = routing_table[dst]
 		if route == nil then
 			-- Destination is not on LAN, broadcast it to all WAN modems
+			log("Forwarding LAN packet from " .. data:get_src() .. " to WAN")
 			for _, side in pairs(WAN_MODEMS) do
 				peripheral.call(side, "transmit", WAN_CHANNEL, 0, msg)
 			end
 		else
 			-- Destination is on lan, send it directly
+			log("Packet from " .. data:get_src() .. " is to a dst on LAN")
 			peripheral.call(route[1], "transmit", LAN_CHANNEL, 0, data:get_data())
 		end
 	else
@@ -126,7 +130,7 @@ function lan_loop()
 		if s_channel == LAN_CHANNEL then
 			local res = table_contains(LAN_MODEMS, side)
 			if res ~= nil then
-				-- Packet is on the LAN channel and came from a LAN modem, handle it
+				-- Packet is on the LAN channel, handle it
 				handle_lan_msg(side, msg)
 			end
 		end

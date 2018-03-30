@@ -29,7 +29,6 @@ function open(side)
 		return
 	end
 
-	modem.open(LAN_CHANNEL)
 	peripheral.call(side, "open", LAN_CHANNEL)
 	modems[#modems+1] = side
 	announce_host_up(side)
